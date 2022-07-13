@@ -33,7 +33,36 @@
           <!-- 表格 -->
           <el-table :data="canShuDate" stripe style="width: 100%" border>
             <el-table-column type="expand">
-              <template v-slot></template>
+              <template v-slot="scope">
+                <div style="padding:20px 50px">
+                  <el-tag
+                    v-for="(str,index) in scope.row.attr_vals.split(' ')"
+                    :key="index"
+                    closable
+                    @close="deleteTag"
+                    v-show="scope.row.attr_vals !== ''"
+                    style="margin-right:10px;"
+                  >{{str}}</el-tag>
+
+                  <el-input
+                    style="width:200px"
+                    class="input-new-tag"
+                    v-if="tagShow"
+                    v-model="addTagInput"
+                    ref="addTagInput"
+                    size="small"
+                    @keyup.enter.native="addTag(scope.row)"
+                    @blur="addTag(scope.row)"
+                  ></el-input>
+
+                  <el-button
+                    v-else
+                    class="button-new-tag"
+                    size="small"
+                    @click="tagShow = true"
+                  >+ New Tag</el-button>
+                </div>
+              </template>
             </el-table-column>
 
             <el-table-column label="#" type="index"></el-table-column>
@@ -70,7 +99,35 @@
           <!-- 表格 -->
           <el-table :data="shuXingDate" stripe style="width: 100%" border>
             <el-table-column type="expand">
-              <template v-slot></template>
+              <template v-slot="scope">
+                <div style="padding:20px 50px">
+                  <el-tag
+                    v-for="(str,index) in scope.row.attr_vals.split(' ')"
+                    :key="index"
+                    closable
+                    v-show="scope.row.attr_vals !== ''"
+                    style="margin-right:10px;"
+                  >{{str}}</el-tag>
+
+                  <el-input
+                    style="width:200px"
+                    class="input-new-tag"
+                    v-if="tagShow"
+                    v-model="addTagInput"
+                    ref="addTagInput"
+                    size="small"
+                    @keyup.enter.native="addTag(scope.row)"
+                    @blur="addTag(scope.row)"
+                  ></el-input>
+
+                  <el-button
+                    v-else
+                    class="button-new-tag"
+                    size="small"
+                    @click="tagShow = true"
+                  >+ New Tag</el-button>
+                </div>
+              </template>
             </el-table-column>
 
             <el-table-column label="#" type="index"></el-table-column>
@@ -180,7 +237,9 @@ export default {
           { min: 2, max: 7, message: '长度2-7', trigger: 'blur' }
         ]
       },
-      editAttrId: '' // 编辑修改的属性，参数ID
+      editAttrId: '', // 编辑修改的属性，参数ID
+      addTagInput: '', // 折叠行添加标签
+      tagShow: false // 添加标签显示
     }
   },
   methods: {
@@ -305,12 +364,12 @@ export default {
         this.$message.success('删除成功')
         let index = ''
         if (this.activeName === 'many') {
-          index = this.canShuDate.forEach(item => {
+          index = this.canShuDate.findIndex(item => {
             return item.attr_id === obj.attr_id
           })
           this.canShuDate.splice(index, 1)
         } else if (this.activeName === 'only') {
-          index = this.shuXingDate.forEach(item => {
+          index = this.shuXingDate.findIndex(item => {
             return item.attr_id === obj.attr_id
           })
           this.shuXingDate.splice(index, 1)
@@ -319,6 +378,45 @@ export default {
         this.$message.error('删除失败')
         console.log(err)
       }
+    },
+    // 折叠行添加标签
+    async addTag (obj) {
+      console.log(obj)
+
+      if (this.addTagInput !== '') {
+        try {
+          const { data } = await editManyOnly({
+            id: this.categoriesId,
+            attrid: obj.attr_id,
+            attr_name: obj.attr_name,
+            attr_sel: this.activeName,
+            attr_vals: obj.attr_vals + ' ' + this.addTagInput
+          })
+
+          let index = ''
+          if (this.activeName === 'many') {
+            console.log(this.canShuDate)
+            index = this.canShuDate.findIndex(item => {
+              return item.attr_id === obj.attr_id
+            })
+            this.canShuDate[index].attr_vals = this.canShuDate[index].attr_vals + ' ' + this.addTagInput
+          } else if (this.activeName === 'only') {
+            index = this.shuXingDate.findIndex(item => {
+              return item.attr_id === obj.attr_id
+            })
+            this.shuXingDate[index].attr_vals = this.shuXingDate[index].attr_vals + ' ' + this.addTagInput
+          }
+          console.log(data)
+        } catch (err) {
+          console.log(err)
+        }
+      }
+      this.addTagInput = ''
+      this.tagShow = false
+    },
+    // 删除折叠行标签
+    deleteTag () {
+      this.$message('别点了，没做😄')
     }
   },
   computed: {},
