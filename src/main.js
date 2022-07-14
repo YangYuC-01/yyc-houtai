@@ -17,6 +17,10 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
+import tableTree from 'vue-table-with-tree-grid'
+
+Vue.component('tableTree', tableTree)
+
 Vue.use(VueQuillEditor /* { default global options } */)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
