@@ -61,14 +61,24 @@ export default {
       this.$refs.loginForm.validate(async (isOk) => {
         if (isOk) {
           console.log('校验成功')
+          const loading = this.$loading({
+            lock: true,
+            text: 'Loading',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          })
           try {
             const { data } = await login({ username: this.loginForm.userName, password: this.loginForm.password })
             console.log(data)
             this.$store.commit('setToken', data.data.token)
+            loading.close()
+
             this.$message.success('登录成功')
             this.$router.push({ name: 'home' })
           } catch (err) {
             console.log(err)
+            loading.close()
+
             this.$message.error('登录失败，请重试')
           }
         } else {
@@ -88,13 +98,17 @@ export default {
 .login {
   width: 100vw;
   height: 100vh;
-  background-color: #2b4b6b;
+  background-image: url('@/assets/zentree_1.png');
+  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
 
   .el-card {
     overflow: unset;
+    background-color: rgba(255,255,255,.4);
+    border: none;
+    border-radius: 10px;
   }
   :deep(.el-card__body) {
   position: relative;

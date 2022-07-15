@@ -29,6 +29,7 @@
             size="small"
             :disabled="categoriesId===''"
             @click="manyOnlyDialog=true"
+            style="margin-bottom:10px"
           >添加参数</el-button>
           <!-- 表格 -->
           <el-table :data="canShuDate" stripe style="width: 100%" border>
@@ -95,6 +96,7 @@
             size="small"
             :disabled="categoriesId===''"
             @click="manyOnlyDialog=true"
+            style="margin-bottom:10px"
           >添加属性</el-button>
           <!-- 表格 -->
           <el-table :data="shuXingDate" stripe style="width: 100%" border>

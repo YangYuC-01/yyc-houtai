@@ -70,7 +70,7 @@ export default {
   .topButton {
     width: 100%;
     height: 40px;
-    background-color: #ff69b4;
+    background-color: #E74D6B;
     text-align: center;
     line-height: 40px;
     cursor: pointer;

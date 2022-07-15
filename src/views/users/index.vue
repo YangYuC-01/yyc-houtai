@@ -7,7 +7,7 @@
     <el-card class="box-card">
       <!-- 输入框  按钮 -->
       <div class="top">
-        <el-input v-model="inputValue" placeholder="请输入内容">
+        <el-input v-model.trim="inputValue" placeholder="请输入内容" @keyup.enter.native="searchFn">
           <el-button slot="append" icon="el-icon-search" @click="searchFn"></el-button>
         </el-input>
         <el-button type="primary" @click="addDialogShow = true">添加用户</el-button>
@@ -306,17 +306,21 @@ export default {
     },
     // 搜索
     async searchFn () {
-      try {
-        const { data } = await getUsersList({
-          query: this.inputValue,
-          pagenum: this.pagenum,
-          pagesize: this.pagesize
-        })
-        console.log(data)
-        this.usersList = data.data.users
-        this.total = data.data.total
-      } catch (err) {
-        console.log(err)
+      if (this.inputValue === '') {
+        return this.$message.warning('搜索框不能为空')
+      } else {
+        try {
+          const { data } = await getUsersList({
+            query: this.inputValue,
+            pagenum: this.pagenum,
+            pagesize: this.pagesize
+          })
+          console.log(data)
+          this.usersList = data.data.users
+          this.total = data.data.total
+        } catch (err) {
+          console.log(err)
+        }
       }
     },
     // 修改用户状态
@@ -421,7 +425,13 @@ export default {
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    inputValue () {
+      if (this.inputValue === '') {
+        this.getUsersList()
+      }
+    }
+  },
   filters: {},
   components: {
     Breadcrumb
