@@ -249,7 +249,7 @@ export default {
     // 关闭弹出层
     handleClose () {
       this.editDialog = false
-      this.$refs.editFormRef.resetFields()
+      this.editForm.editInput = ''
       this.addDialog = false
       this.addForm.cat_name = ''
       this.addForm.cat_level = 0
